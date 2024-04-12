@@ -16,9 +16,16 @@ var DB *gorm.DB
 
 // Database 在中间件中初始化mysql链接
 func Database(connString string) {
+	// 将日志写入文件
+	f, err := os.OpenFile("logs/mysql.log", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		util.Log().Error("mysql lost: %v", err)
+	}
+	//logFile, _ := os.Create("mysql.log")
 	// 初始化GORM日志配置
 	newLogger := logger.New(
-		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
+		log.New(f, "\r\n", log.LstdFlags), // io writer
+		//log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
 		logger.Config{
 			SlowThreshold:             time.Second, // Slow SQL threshold
 			LogLevel:                  logger.Info, // Log level(这里记得根据需求改一下)
